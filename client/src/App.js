@@ -17,12 +17,10 @@ class App extends Component {
 
       // Get the contract instance.
       this.networkId = await this.web3.eth.net.getId();
-      //console.log(CounterContract.networks[this.networkId].address)
+    
        this.counter = new this.web3.eth.Contract(
-         CounterContract.abi, "0xe4addb06c6cf217c6267e56f9a590c33396ebc29"
-         //CounterContract.networks[this.networkId] &&  CounterContract.networks[this.networkId].address,
+         CounterContract.abi,  CounterContract.networks[this.networkId] &&  CounterContract.networks[this.networkId].address
       );
-      console.log(this.counter.methods.ViewCount().call())
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
@@ -40,19 +38,17 @@ class App extends Component {
     // Get the value from the contract to prove it worked.
     const response = await this.counter.methods.ViewCount().call();
     // Update state with the result.
-    console.log(response)
+    this.setState({count: response})
   };
 
   handleIncrease = async() => {
-    await this.counter.methods.IncrementCount().call()
+    await this.counter.methods.IncrementCount().send({ from: this.accounts[0] })
     await this.runExample()
-    alert("count incremented");
   }
 
   handleReduce = async() => {
-    await this.counter.methods.DecrementCount().call()
+    await this.counter.methods.DecrementCount().send({ from: this.accounts[0] })
     await this.runExample()
-    alert("count decremented");
   }
 
   render() {
